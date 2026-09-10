@@ -70,7 +70,6 @@
         .pane { display: none; flex-direction: column; justify-content: space-between; height: 100%; }
         .pane.active { display: flex; }
         
-        /* Quiz & Question Styles */
         .question-img { max-width: 100%; max-height: 140px; border-radius: 8px; margin-bottom: 10px; object-fit: contain; display: block; margin-left: auto; margin-right: auto; }
         .timer-box { display: flex; justify-content: space-between; background: #f1f5f9; padding: 8px 12px; border-radius: 8px; margin-bottom: 10px; font-weight: 600; font-size: 13px; color: #475569; }
         .timer { color: #ef4444; }
@@ -79,7 +78,6 @@
         .option-btn { background: #f8fafc; border: 2px solid #e2e8f0; padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; color: #334155; transition: 0.2s; }
         .option-btn:hover { background: #e0f2fe; border-color: #0369a1; color: #0369a1; }
 
-        /* Leaderboard Right Side */
         .leaderboard-card { border-top-color: #3b82f6; }
         .leaderboard-list { list-style: none; margin-top: 8px; max-height: 350px; overflow-y: auto; }
         .leaderboard-item { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #3b82f6; font-size: 13px; }
@@ -90,15 +88,13 @@
 <body>
 
 <div class="main-wrapper">
-    <!-- LEFT SIDE: DYNAMIC PANELS -->
     <div class="card">
-        
-        <!-- 1. Student Registration & Selection -->
+        <!-- 1. Student Registration -->
         <div id="reg-screen" class="pane active">
             <div>
                 <div class="header-flex">
                     <span class="badge">🎯 Pro Quiz Portal</span>
-                    <button class="top-admin-link" onclick="switchPane('admin-login-screen')">🔑 Admin Login</button>
+                    <button class="top-admin-link" type="button" onclick="goToAdminLogin()">🔑 Admin Login</button>
                 </div>
                 <h2>Ananth PU College</h2>
                 <div class="form-group">
@@ -127,7 +123,7 @@
                 </div>
             </div>
             <div>
-                <button class="btn" onclick="startQuiz()">ಕ್ವಿಜ್ ಪ್ರಾರಂಭಿಸಿ (Start Quiz)</button>
+                <button class="btn" type="button" onclick="startQuiz()">ಕ್ವಿಜ್ ಪ್ರಾರಂಭಿಸಿ (Start Quiz)</button>
             </div>
         </div>
 
@@ -147,12 +143,12 @@
                 </div>
             </div>
             <div>
-                <button class="btn" style="background: #ef4444;" onclick="verifyAdmin()">ಪ್ರವೇಶಿಸಿ (Login)</button>
-                <button class="btn" style="background: #64748b;" onclick="switchPane('reg-screen')">ಹಿಂದಕ್ಕೆ (Back)</button>
+                <button class="btn" type="button" style="background: #ef4444;" onclick="verifyAdmin()">ಪ್ರವೇಶಿಸಿ (Login)</button>
+                <button class="btn" type="button" style="background: #64748b; margin-top: 8px;" onclick="switchPane('reg-screen')">ಹಿಂದಕ್ಕೆ (Back)</button>
             </div>
         </div>
 
-        <!-- 3. Admin Question Creator Dashboard -->
+        <!-- 3. Admin Dashboard -->
         <div id="admin-dashboard" class="pane">
             <div style="overflow-y: auto; max-height: 360px; padding-right: 5px;">
                 <span class="badge" style="background: #fef08a; color: #854d0e;">⚡ Quiz Creator Panel</span>
@@ -193,8 +189,8 @@
                 </div>
             </div>
             <div>
-                <button class="btn" style="background: #10b981;" onclick="addNewQuestion()">+ ಪ್ರಶ್ನೆ ಸೇರಿಸಿ (Save)</button>
-                <button class="btn" style="background: #64748b;" onclick="switchPane('reg-screen')">ಹೊರಬನ್ನಿ (Logout)</button>
+                <button class="btn" type="button" style="background: #10b981;" onclick="addNewQuestion()">+ ಪ್ರಶ್ನೆ ಸೇರಿಸಿ (Save)</button>
+                <button class="btn" type="button" style="background: #64748b; margin-top: 8px;" onclick="switchPane('reg-screen')">ಹೊರಬನ್ನಿ (Logout)</button>
             </div>
         </div>
 
@@ -216,7 +212,7 @@
         <div id="result-screen" class="pane" style="text-align: center; justify-content: center;">
             <h2 style="color: #10b981;">🎉 ಅಭಿನಂದನೆಗಳು! 🎉</h2>
             <p id="score-msg" style="font-size: 15px; color: #475569; margin: 15px 0; font-weight: 600;"></p>
-            <button class="btn" onclick="location.reload()">ಮತ್ತೊಮ್ಮೆ ಆಡಿ (Play Again)</button>
+            <button class="btn" type="button" onclick="location.reload()">ಮತ್ತೊಮ್ಮೆ ಆಡಿ (Play Again)</button>
         </div>
     </div>
 
@@ -261,7 +257,12 @@
 
     function switchPane(paneId) {
         document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
-        document.getElementById(paneId).classList.add('active');
+        let target = document.getElementById(paneId);
+        if(target) target.classList.add('active');
+    }
+
+    function goToAdminLogin() {
+        switchPane('admin-login-screen');
     }
 
     function verifyAdmin() {
@@ -371,6 +372,7 @@
             optContainer.innerHTML = "";
             q.options.forEach((opt, idx) => {
                 let btn = document.createElement('button');
+                btn.type = 'button';
                 btn.className = 'option-btn';
                 btn.innerText = opt;
                 btn.onclick = () => handleAnswer(idx === q.answer);
@@ -390,7 +392,7 @@
 
     function showResult() {
         switchPane('result-screen');
-        document.getElementById('score-msg').innerText = currentStudent + ", ನಿಮಗೆ " + activeQuestions.length ಕ್ಕೆ + score + " ಅಂಕಗಳು ಬಂದಿವೆ!";
+        document.getElementById('score-msg').innerText = currentStudent + ", ನಿಮಗೆ " + activeQuestions.length + " ಕ್ಕೆ " + score + " ಅಂಕಗಳು ಬಂದಿವೆ!";
         
         let list = document.getElementById('leaderboard');
         let newItem = document.createElement('li');
