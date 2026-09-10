@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ananth PU College - Pro Quiz Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { 
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; 
+        }
+        .main-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 950px;
+        }
+        @media(max-width: 768px) {
+            .main-wrapper { grid-template-columns: 1fr; }
+        }
+        .card { 
+            background: #ffffff; 
+            padding: 25px; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3); 
+            border-top: 6px solid #10b981;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .top-admin-link {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .top-admin-link:hover { background: #2563eb; }
+        h2 { color: #1e293b; font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+        .form-group { margin-bottom: 12px; text-align: left; }
+        label { display: block; margin-bottom: 4px; font-weight: 600; color: #475569; font-size: 13px; }
+        input, select, textarea { 
+            width: 100%; padding: 10px 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 13px; background: #f8fafc; color: #1e293b;
+        }
+        input:focus, select:focus, textarea:focus { border-color: #10b981; outline: none; background: #fff; }
+        .btn { 
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white; border: none; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 8px; cursor: pointer; width: 100%; transition: 0.3s;
+            margin-top: 5px;
+        }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .pane { display: none; flex-direction: column; justify-content: space-between; height: 100%; }
+        .pane.active { display: flex; }
+        
+        /* Quiz & Question Styles */
+        .question-img { max-width: 100%; max-height: 140px; border-radius: 8px; margin-bottom: 10px; object-fit: contain; display: block; margin-left: auto; margin-right: auto; }
+        .timer-box { display: flex; justify-content: space-between; background: #f1f5f9; padding: 8px 12px; border-radius: 8px; margin-bottom: 10px; font-weight: 600; font-size: 13px; color: #475569; }
+        .timer { color: #ef4444; }
+        .question { font-size: 15px; font-weight: 600; color: #1e293b; margin-bottom: 12px; text-align: left; }
+        .options { display: flex; flex-direction: column; gap: 8px; text-align: left; margin-bottom: 10px; }
+        .option-btn { background: #f8fafc; border: 2px solid #e2e8f0; padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; color: #334155; transition: 0.2s; }
+        .option-btn:hover { background: #e0f2fe; border-color: #0369a1; color: #0369a1; }
+
+        /* Leaderboard Right Side */
+        .leaderboard-card { border-top-color: #3b82f6; }
+        .leaderboard-list { list-style: none; margin-top: 8px; max-height: 350px; overflow-y: auto; }
+        .leaderboard-item { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #3b82f6; font-size: 13px; }
+        .student-info { font-weight: 600; color: #1e293b; }
+        .student-score { background: #dbeafe; color: #1d4ed8; padding: 3px 8px; border-radius: 12px; font-weight: 700; font-size: 11px; }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <!-- LEFT SIDE: DYNAMIC PANELS -->
+    <div class="card">
+        
+        <!-- 1. Student Registration & Selection -->
+        <div id="reg-screen" class="pane active">
+            <div>
+                <div class="header-flex">
+                    <span class="badge">🎯 Pro Quiz Portal</span>
+                    <button class="top-admin-link" onclick="switchPane('admin-login-screen')">🔑 Admin Login</button>
+                </div>
+                <h2>Ananth PU College</h2>
+                <div class="form-group">
+                    <label>ನಿಮ್ಮ ಹೆಸರು (Full Name):</label>
+                    <input type="text" id="student-name" placeholder="ಉದಾ: Rahul Kumar">
+                </div>
+                <div class="form-group">
+                    <label>ಮೊಬೈಲ್ ನಂಬರ್ (Mobile):</label>
+                    <input type="tel" id="student-mobile" placeholder="9876543210">
+                </div>
+                <div class="form-group">
+                    <label>ಪರೀಕ್ಷೆ / ವಿಭಾಗ (Select Exam):</label>
+                    <select id="exam-stream">
+                        <option value="NEET">NEET - Biology / Physics</option>
+                        <option value="JEE">JEE - Mathematics / Physics</option>
+                        <option value="KCET">K-CET - Common Test</option>
+                        <option value="CA">CA Foundation</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>ಚಾಪ್ಟರ್ (Select Chapter):</label>
+                    <select id="chapter-select">
+                        <option value="All">All Chapters (Full Mock)</option>
+                        <option value="Chapter 1">Chapter 1</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button class="btn" onclick="startQuiz()">ಕ್ವಿಜ್ ಪ್ರಾರಂಭಿಸಿ (Start Quiz)</button>
+            </div>
+        </div>
+
+        <!-- 2. Admin Login Screen -->
+        <div id="admin-login-screen" class="pane" style="background: #f8fafc; padding: 15px; border-radius: 12px;">
+            <div>
+                <span class="badge" style="background: #fee2e2; color: #991b1b;">🔐 Admin Portal</span>
+                <h2 style="margin-top: 10px; color: #1e3a8a;">ಲಾಗಿನ್ ಆಗಿ (Login)</h2>
+                <p style="font-size: 12px; color: #64748b; margin-bottom: 15px;">ಪ್ರಶ್ನೆಗಳನ್ನು ಮತ್ತು ಡಯಾಗ್ರಾಂಗಳನ್ನು ಸೇರಿಸಲು ಲಾಗಿನ್ ಮಾಡಿ.</p>
+                <div class="form-group">
+                    <label>Username:</label>
+                    <input type="text" id="admin-user" placeholder="admin">
+                </div>
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" id="admin-pass" placeholder="1234">
+                </div>
+            </div>
+            <div>
+                <button class="btn" style="background: #ef4444;" onclick="verifyAdmin()">ಪ್ರವೇಶಿಸಿ (Login)</button>
+                <button class="btn" style="background: #64748b;" onclick="switchPane('reg-screen')">ಹಿಂದಕ್ಕೆ (Back)</button>
+            </div>
+        </div>
+
+        <!-- 3. Admin Question Creator Dashboard -->
+        <div id="admin-dashboard" class="pane">
+            <div style="overflow-y: auto; max-height: 360px; padding-right: 5px;">
+                <span class="badge" style="background: #fef08a; color: #854d0e;">⚡ Quiz Creator Panel</span>
+                <h2>ಹೊಸ ಪ್ರಶ್ನೆ / ಡಯಾಗ್ರಾಂ ಸೇರಿಸಿ</h2>
+                <div class="form-group">
+                    <label>ವಿಭಾಗ & ಚಾಪ್ಟರ್:</label>
+                    <select id="admin-exam" style="margin-bottom: 5px;">
+                        <option value="NEET">NEET</option>
+                        <option value="JEE">JEE</option>
+                        <option value="KCET">K-CET</option>
+                        <option value="CA">CA Foundation</option>
+                    </select>
+                    <input type="text" id="admin-chapter" placeholder="ಚಾಪ್ಟರ್ ಹೆಸರು (ಉದಾ: Chapter 1)">
+                </div>
+                <div class="form-group">
+                    <label>ಪ್ರಶ್ನೆ (Question Text):</label>
+                    <textarea id="admin-q-text" rows="2" placeholder="ಪ್ರಶ್ನೆ ಟೈಪ್ ಮಾಡಿ..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>ಡಯಾಗ್ರಾಂ ಇಮೇಜ್ ಲಿಂಕ್ (Optional Image URL):</label>
+                    <input type="text" id="admin-q-img" placeholder="https://image-link.jpg">
+                </div>
+                <div class="form-group">
+                    <label>Option A, B, C, D:</label>
+                    <input type="text" id="adm-a" placeholder="Option A" style="margin-bottom: 4px;">
+                    <input type="text" id="adm-b" placeholder="Option B" style="margin-bottom: 4px;">
+                    <input type="text" id="adm-c" placeholder="Option C" style="margin-bottom: 4px;">
+                    <input type="text" id="adm-d" placeholder="Option D">
+                </div>
+                <div class="form-group">
+                    <label>ಸರಿಯಾದ ಉತ್ತರ (Correct Option):</label>
+                    <select id="adm-correct">
+                        <option value="0">Option A</option>
+                        <option value="1">Option B</option>
+                        <option value="2">Option C</option>
+                        <option value="3">Option D</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button class="btn" style="background: #10b981;" onclick="addNewQuestion()">+ ಪ್ರಶ್ನೆ ಸೇರಿಸಿ (Save)</button>
+                <button class="btn" style="background: #64748b;" onclick="switchPane('reg-screen')">ಹೊರಬನ್ನಿ (Logout)</button>
+            </div>
+        </div>
+
+        <!-- 4. Quiz Screen -->
+        <div id="quiz-screen" class="pane">
+            <div>
+                <div class="timer-box">
+                    <span id="q-count" style="color: #1e3a8a;">Question 1/1</span>
+                    <span class="timer" id="time-left">⏱️ 30s</span>
+                </div>
+                <div id="quiz-media-container"></div>
+                <div class="question" id="question-text">ಪ್ರಶ್ನೆ ಇಲ್ಲಿ ಬರುತ್ತದೆ...</div>
+                <div class="options" id="options-container"></div>
+            </div>
+            <div></div>
+        </div>
+
+        <!-- 5. Result Screen -->
+        <div id="result-screen" class="pane" style="text-align: center; justify-content: center;">
+            <h2 style="color: #10b981;">🎉 ಅಭಿನಂದನೆಗಳು! 🎉</h2>
+            <p id="score-msg" style="font-size: 15px; color: #475569; margin: 15px 0; font-weight: 600;"></p>
+            <button class="btn" onclick="location.reload()">ಮತ್ತೊಮ್ಮೆ ಆಡಿ (Play Again)</button>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE: LEADERBOARD -->
+    <div class="card leaderboard-card">
+        <div>
+            <span class="badge" style="background: #dbeafe; color: #1d4ed8;">🏆 Leaderboard</span>
+            <h2>Top Achievers (ಸಂದರ್ಶಕರು)</h2>
+            <p style="font-size: 11px; color: #64748b; margin-bottom: 8px;">ಪ್ರತಿದಿನ ಕ್ವಿಜ್ ಆಡಿದವರ ನೇರ ಪಟ್ಟಿ ಇಲ್ಲಿದೆ:</p>
+            
+            <ul class="leaderboard-list" id="leaderboard">
+                <li class="leaderboard-item">
+                    <span class="student-info">1. Akshata V Pandit (NEET)</span>
+                    <span class="student-score">2/2 Marks</span>
+                </li>
+                <li class="leaderboard-item">
+                    <span class="student-info">2. Shwetha S M (KCET)</span>
+                    <span class="student-score">2/2 Marks</span>
+                </li>
+            </ul>
+        </div>
+        <div style="text-align: center; font-size: 10px; color: #94a3b8; margin-top: 10px;">
+            Ananth PU College Arsikere Live Portal
+        </div>
+    </div>
+</div>
+
+<script>
+    let questionDatabase = [
+        { exam: "NEET", chapter: "Chapter 1", q: "1. NEET: SI unit of Electric Charge is?", img: "", options: ["Volt", "Coulomb", "Ampere", "Ohm"], answer: 1 },
+        { exam: "JEE", chapter: "Chapter 1", q: "1. JEE: Value of acceleration due to gravity (g) is approx?", img: "", options: ["9.8 m/s²", "8.9 m/s²", "10.5 m/s²", "6.67 m/s²"], answer: 0 }
+    ];
+
+    let activeQuestions = [];
+    let currentStudent = "";
+    let currentExam = "";
+    let currentChapter = "";
+    let timer;
+    let timeLeft = 30;
+    let currentQIndex = 0;
+    let score = 0;
+
+    function switchPane(paneId) {
+        document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+        document.getElementById(paneId).classList.add('active');
+    }
+
+    function verifyAdmin() {
+        let u = document.getElementById('admin-user').value.trim();
+        let p = document.getElementById('admin-pass').value.trim();
+        if(u === "admin" && p === "1234") {
+            switchPane('admin-dashboard');
+            document.getElementById('admin-user').value = "";
+            document.getElementById('admin-pass').value = "";
+        } else {
+            alert("ತಪ್ಪಾದ Username ಅಥವಾ Password! (ಯೂಸರ್‌ನೇಮ್: admin, ಪಾಸ್‌ವರ್ಡ್: 1234)");
+        }
+    }
+
+    function addNewQuestion() {
+        let exam = document.getElementById('admin-exam').value;
+        let chapter = document.getElementById('admin-chapter').value.trim() || "Chapter 1";
+        let qText = document.getElementById('admin-q-text').value.trim();
+        let qImg = document.getElementById('admin-q-img').value.trim();
+        let a = document.getElementById('adm-a').value.trim();
+        let b = document.getElementById('adm-b').value.trim();
+        let c = document.getElementById('adm-c').value.trim();
+        let d = document.getElementById('adm-d').value.trim();
+        let correct = parseInt(document.getElementById('adm-correct').value);
+
+        if(qText === "" || a === "" || b === "" || c === "" || d === "") {
+            alert("ದಯವಿಟ್ಟು ಪ್ರಶ್ನೆ ಮತ್ತು ಎಲ್ಲಾ 4 ಆಪ್ಷನ್‌ಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ!");
+            return;
+        }
+
+        questionDatabase.push({
+            exam: exam,
+            chapter: chapter,
+            q: qText,
+            img: qImg,
+            options: [a, b, c, d],
+            answer: correct
+        });
+
+        alert("ಯಶಸ್ವಿಯಾಗಿ ಹೊಸ ಪ್ರಶ್ನೆ ಸೇರಿಸಲಾಗಿದೆ! ಒಟ್ಟು ಪ್ರಶ್ನೆಗಳು: " + questionDatabase.length);
+        
+        document.getElementById('admin-q-text').value = "";
+        document.getElementById('admin-q-img').value = "";
+        document.getElementById('adm-a').value = "";
+        document.getElementById('adm-b').value = "";
+        document.getElementById('adm-c').value = "";
+        document.getElementById('adm-d').value = "";
+    }
+
+    function startQuiz() {
+        const name = document.getElementById('student-name').value.trim();
+        const mobile = document.getElementById('student-mobile').value.trim();
+        currentExam = document.getElementById('exam-stream').value;
+        currentChapter = document.getElementById('chapter-select').value;
+        
+        if(name === "" || mobile === "") {
+            alert("ದಯವಿಟ್ಟು ನಿಮ್ಮ ಹೆಸರು ಮತ್ತು ಮೊಬೈಲ್ ನಂಬರ್ ಹಾಕಿ!");
+            return;
+        }
+
+        activeQuestions = questionDatabase.filter(item => {
+            if(currentChapter === "All") return item.exam === currentExam;
+            return item.exam === currentExam && item.chapter === currentChapter;
+        });
+
+        if(activeQuestions.length === 0) {
+            alert("ಈ ಚಾಪ್ಟರ್‌ಗೆ ಯಾವುದೇ ಪ್ರಶ್ನೆಗಳು ಲಭ್ಯವಿಲ್ಲ! Admin Login ಮೂಲಕ ಪ್ರಶ್ನೆಗಳನ್ನು ಸೇರಿಸಿ.");
+            return;
+        }
+
+        currentStudent = name;
+        score = 0;
+        currentQIndex = 0;
+        switchPane('quiz-screen');
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        if(currentQIndex < activeQuestions.length) {
+            clearInterval(timer);
+            timeLeft = 30;
+            document.getElementById('time-left').innerText = "⏱️ " + timeLeft + "s";
+            document.getElementById('q-count').innerText = "Question " + (currentQIndex + 1) + "/" + activeQuestions.length;
+            
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('time-left').innerText = "⏱️ " + timeLeft + "s";
+                if(timeLeft <= 0) {
+                    clearInterval(timer);
+                    handleAnswer(false);
+                }
+            }, 1000);
+
+            let q = activeQuestions[currentQIndex];
+            document.getElementById('question-text').innerText = q.q;
+            
+            let mediaContainer = document.getElementById('quiz-media-container');
+            mediaContainer.innerHTML = "";
+            if(q.img && q.img.trim() !== "") {
+                let imgTag = document.createElement('img');
+                imgTag.src = q.img;
+                imgTag.className = 'question-img';
+                mediaContainer.appendChild(imgTag);
+            }
+
+            let optContainer = document.getElementById('options-container');
+            optContainer.innerHTML = "";
+            q.options.forEach((opt, idx) => {
+                let btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => handleAnswer(idx === q.answer);
+                optContainer.appendChild(btn);
+            });
+        } else {
+            showResult();
+        }
+    }
+
+    function handleAnswer(isCorrect) {
+        clearInterval(timer);
+        if(isCorrect) score++;
+        currentQIndex++;
+        loadQuestion();
+    }
+
+    function showResult() {
+        switchPane('result-screen');
+        document.getElementById('score-msg').innerText = currentStudent + ", ನಿಮಗೆ " + activeQuestions.length ಕ್ಕೆ + score + " ಅಂಕಗಳು ಬಂದಿವೆ!";
+        
+        let list = document.getElementById('leaderboard');
+        let newItem = document.createElement('li');
+        newItem.className = 'leaderboard-item';
+        newItem.innerHTML = `<span class="student-info">${currentStudent} (${currentExam})</span><span class="student-score">${score}/${activeQuestions.length} Marks</span>`;
+        list.prepend(newItem);
+    }
+</script>
+
+</body>
+</html>
